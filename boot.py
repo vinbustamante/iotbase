@@ -36,5 +36,10 @@ def html(req, res):
   yield from picoweb.start_response(res, content_type = "text/html")
   yield from app.render_template(res, "hello.tpl", (sensor,))
 
+@app.route('/update-network')
+def renderConfig(req, res):
+  yield from picoweb.start_response(res, content_type = "text/html")
+  yield from app.awrite(res)  
+
 app.run(debug=True, host =ipadd[0])
 
