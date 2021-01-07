@@ -14,18 +14,22 @@ try:
 except:
   import socket
 
-wlan = network.WLAN(network.AP_IF)
+# access point
+# wlan = network.WLAN(network.AP_IF)
+# wlan.active(True)
+# wlan.config(essid='dev-ice', password='dev-ice')
+
+# station
+wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.config(essid='dev-ice', password='dev-ice')
-
-ipadd=wlan.ifconfig()
+wlan.connect("redsoft", "xxxx")
 
 
-while wlan.active() == False:
+while wlan.isconnected() == False:    
     pass
 
+ipadd=wlan.ifconfig()
 print(wlan.ifconfig())
-
 
 import picoweb
 app = picoweb.WebApp(__name__)
@@ -39,7 +43,10 @@ def html(req, res):
 @app.route('/update-network')
 def renderConfig(req, res):
   yield from picoweb.start_response(res, content_type = "text/html")
-  yield from app.awrite(res)  
+  await req.read_form_data()
+  print(req.form.items())
+  # req.form.items()
+  yield from res.awrite(str(req.form.items()))
 
 app.run(debug=True, host =ipadd[0])
 
