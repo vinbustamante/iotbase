@@ -4,36 +4,44 @@ from service.Wifi import Wifi
 from service.ConfigService import ConfigService
 from service.Button import Button
 
-PIN_BUTTON = 0
-PIN_LED = 2
-
-# CONNECT TO NETWORK
-wlan = Wifi("redsoft", "stardust", 2)
-wlan.connect()
-while wlan.is_connected() == False:
-    pass
-ipadd=wlan.info()
-print(wlan.info())
-
-
-# LOAD UI MANAGEMENT ONLY IF ENABLE
+# LOAD CONFIG
 configService = ConfigService()
-if configService.is_webmode():
+configService.load_config()
+
+PIN_BUTTON = configService.get_button_pin()
+PIN_LED = configService.get_led_pin()
+button = Button(PIN_BUTTON)
+
+
+def connect_to_network():
+    wlan = Wifi(configService.get_network_ssid(), configService.get_network_pwd(), configService.get_network_mode())
+    wlan.connect()
+    while wlan.is_connected() == False:
+        pass
+    print(wlan.info())
+
+def load_web_server():
     from service.Led import Led
     led = Led(PIN_LED)
     from service.WebServer import WebServer
     led.on()
     webServer = WebServer()
     webServer.run()    
-else:
-    button = Button(PIN_BUTTON)
+
+def on_button_click():
+    from service.Led import Led
+    led = Led(PIN_LED)
+    configService.enable_webmode()
+    led.blink()
+    led.off()
+    machine.reset()
+
+
+connect_to_network()  
+if configService.is_webmode():
+    load_web_server() 
+else:    
     while True:
         if button.is_press():
-            from service.Led import Led
-            led = Led(PIN_LED)
-            configService.enable_webmode()
-            led.blink()
-            led.off()
-            machine.reset()
-
+            on_button_click()
         time.sleep(1.0)

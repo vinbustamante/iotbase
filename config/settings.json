@@ -1,0 +1,10 @@
+{
+  "sensor": {
+    "led": 2
+  },
+  "network": {
+    "mode": 2,
+    "ssid": "",
+    "pwd": ""
+  }
+}
