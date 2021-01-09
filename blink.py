@@ -8,7 +8,7 @@ from service.Led import Led
 led = Led(2)
 while True:
     led.toggle()
-    time.sleep(0.1)
+    time.sleep(1)
  
 # while True:
 #     led.value(1)

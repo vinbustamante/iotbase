@@ -1,3 +1,4 @@
+import time
 from machine import Pin
 
 class Led:
@@ -18,3 +19,10 @@ class Led:
             self.on()
         else:
             self.off()
+
+    def blink(self, count = 5):
+        index = 0
+        while index < count:
+            self.toggle()
+            time.sleep(1)
+            index = index + 1
